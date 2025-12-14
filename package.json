@@ -6,8 +6,9 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "node node_modules/vite/bin/vite.js build",
-    "preview": "vite preview"
+    "build": "node --version && node node_modules/vite/bin/vite.js build",
+    "preview": "vite preview",
+    "vercel-build": "node node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
     "@zegocloud/zego-uikit-prebuilt": "^2.17.1",
