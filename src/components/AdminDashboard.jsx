@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import API_BASE from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
 function AdminDashboard() {
@@ -24,7 +23,7 @@ function AdminDashboard() {
       setLoading(true);
       
       // Fetch stats
-      const statsRes = await fetch(`${API_BASE}/api/admin/stats`, {
+      const statsRes = await fetch('http://localhost:4000/api/admin/stats', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -45,7 +44,7 @@ function AdminDashboard() {
       }
 
       if (endpoint) {
-        const res = await fetch(`${API_BASE}/api/admin/${endpoint}`, {
+        const res = await fetch(`http://localhost:4000/api/admin/${endpoint}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -66,7 +65,7 @@ function AdminDashboard() {
 
   const handleApprove = async (doctorId) => {
     try {
-      const res = await fetch(`${API_BASE}/api/admin/approve-doctor/${doctorId}`, {
+      const res = await fetch(`http://localhost:4000/api/admin/approve-doctor/${doctorId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -94,7 +93,7 @@ function AdminDashboard() {
     }
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/reject-doctor/${doctorId}`, {
+      const res = await fetch(`http://localhost:4000/api/admin/reject-doctor/${doctorId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API_BASE from '../config/api';
 
 function PatientAppointments({ onBack }) {
   const [appointments, setAppointments] = useState([]);
@@ -15,7 +14,7 @@ function PatientAppointments({ onBack }) {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/api/appointments/patient`, {
+      const res = await fetch('http://localhost:4000/api/appointments/patient', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -42,7 +41,7 @@ function PatientAppointments({ onBack }) {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/api/appointments/${appointmentId}/cancel`, {
+      const res = await fetch(`http://localhost:4000/api/appointments/${appointmentId}/cancel`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

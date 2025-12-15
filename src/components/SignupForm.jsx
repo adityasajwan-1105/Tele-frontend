@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import API_BASE from '../config/api';
 
 function SignupForm({ onClose, onSignupSuccess }) {
   const [role, setRole] = useState('patient');
@@ -116,7 +115,7 @@ function SignupForm({ onClose, onSignupSuccess }) {
         submitData.consultationFee = parseFloat(formData.consultationFee);
       }
 
-      const response = await fetch(`${API_BASE}/api/auth/signup`, {
+      const response = await fetch('http://localhost:4000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

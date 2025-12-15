@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useAuth } from '../context/AuthContext';
 
-import API_BASE from '../config/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function VideoCallRoom() {
   const { appointmentId } = useParams();
@@ -58,7 +58,7 @@ function VideoCallRoom() {
 
       if (!appID || !serverSecret) {
         console.error('ZEGOCLOUD credentials are not configured');
-        setError('Video consultation is not configured. Please set up ZEGOCLOUD credentials. See VIDEO_CALL_SETUP.md in the frontend directory for instructions.');
+        setError('Video consultation is not configured. Please contact support.');
         return;
       }
 

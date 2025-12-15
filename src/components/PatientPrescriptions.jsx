@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import API_BASE from '../config/api';
 
 function PatientPrescriptions({ onBack }) {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -14,7 +13,7 @@ function PatientPrescriptions({ onBack }) {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/api/prescriptions/patient`, {
+      const res = await fetch('http://localhost:4000/api/prescriptions/patient', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

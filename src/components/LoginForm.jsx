@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import API_BASE from '../config/api';
+
+// Base URL for API requests:
+// - In production, comes from Vercel env var VITE_API_BASE_URL
+// - In local development, falls back to localhost
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 function LoginForm({ onClose, onLoginSuccess }) {
   const navigate = useNavigate();
@@ -34,7 +38,7 @@ function LoginForm({ onClose, onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

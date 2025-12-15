@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import API_BASE from '../config/api';
 
 function PatientHealthRecords({ onBack }) {
   const [appointments, setAppointments] = useState([]);
@@ -17,10 +16,10 @@ function PatientHealthRecords({ onBack }) {
       
       // Fetch appointments and prescriptions
       const [appointmentsRes, prescriptionsRes] = await Promise.all([
-        fetch(`${API_BASE}/api/appointments/patient`, {
+        fetch('http://localhost:4000/api/appointments/patient', {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch(`${API_BASE}/api/prescriptions/patient`, {
+        fetch('http://localhost:4000/api/prescriptions/patient', {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);
