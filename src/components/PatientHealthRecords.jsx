@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { API_BASE_URL } from '../utils/api';
 function PatientHealthRecords({ onBack }) {
   const [appointments, setAppointments] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
@@ -16,10 +16,10 @@ function PatientHealthRecords({ onBack }) {
       
       // Fetch appointments and prescriptions
       const [appointmentsRes, prescriptionsRes] = await Promise.all([
-        fetch('http://localhost:4000/api/appointments/patient', {
+        fetch(`${API_BASE_URL}/api/appointments/patient`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch('http://localhost:4000/api/prescriptions/patient', {
+        fetch(`${API_BASE_URL}/api/prescriptions/patient`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);

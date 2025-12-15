@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../utils/api';
 
 function DoctorDashboard() {
   const { user, logout } = useAuth();
@@ -31,7 +32,7 @@ function DoctorDashboard() {
       const token = localStorage.getItem('token');
 
       if (activeTab === 'appointments') {
-        const res = await fetch('http://localhost:4000/api/appointments/doctor', {
+        const res = await fetch(`${API_BASE_URL}/api/appointments/doctor`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -40,7 +41,7 @@ function DoctorDashboard() {
         }
       } else if (activeTab === 'patients') {
         // Get unique patients from appointments
-        const appointmentsRes = await fetch('http://localhost:4000/api/appointments/doctor', {
+        const appointmentsRes = await fetch(`${API_BASE_URL}/api/appointments/doctor`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const appointmentsData = await appointmentsRes.json();
@@ -60,7 +61,7 @@ function DoctorDashboard() {
           setPatients(Object.values(uniquePatients));
         }
       } else if (activeTab === 'schedule') {
-        const res = await fetch('http://localhost:4000/api/appointments/doctor?status=confirmed', {
+        const res = await fetch(`${API_BASE_URL}/api/appointments/doctor?status=confirmed`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -83,7 +84,7 @@ function DoctorDashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:4000/api/appointments/${appointmentId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}/status`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -113,7 +114,7 @@ function DoctorDashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:4000/api/appointments/${showRejectModal}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/appointments/${showRejectModal}/status`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -188,7 +189,7 @@ function DoctorDashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4000/api/prescriptions/create', {
+      const res = await fetch(`${API_BASE_URL}/api/prescriptions/create`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
