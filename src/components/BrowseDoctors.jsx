@@ -240,7 +240,7 @@ function BrowseDoctors({ onBack }) {
                   {doctor.consultationFee && (
                     <div className="doctor-card__detail">
                       <span className="detail-icon">💰</span>
-                      <span className="detail-text">${doctor.consultationFee} consultation fee</span>
+                      <span className="detail-text">₹{doctor.consultationFee} consultation fee</span>
                     </div>
                   )}
                   

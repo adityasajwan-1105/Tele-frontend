@@ -4,6 +4,7 @@ import BrowseDoctors from './BrowseDoctors';
 import PatientAppointments from './PatientAppointments';
 import PatientPrescriptions from './PatientPrescriptions';
 import PatientHealthRecords from './PatientHealthRecords';
+import Chat from './Chat';
 
 function PatientDashboard() {
   const { user, logout } = useAuth();
@@ -91,6 +92,29 @@ function PatientDashboard() {
     );
   }
 
+  if (activeView === 'chat') {
+    return (
+      <div className="dashboard">
+        <header className="dashboard__header">
+          <div className="container dashboard__header-inner">
+            <div className="dashboard__brand">
+              <h1>TeleMed</h1>
+            </div>
+            <nav className="dashboard__nav">
+              <span className="dashboard__user">Welcome, {user?.name}</span>
+              <button className="btn btn-text" onClick={handleLogout}>Logout</button>
+            </nav>
+          </div>
+        </header>
+        <main className="dashboard__main">
+          <div className="container">
+            <Chat onBack={() => setActiveView('dashboard')} />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard">
       <header className="dashboard__header">
@@ -159,6 +183,17 @@ function PatientDashboard() {
                   onClick={() => setActiveView('health-records')}
                 >
                   View Records
+                </button>
+              </div>
+              <div className="action-card">
+                <div className="action-card__icon">💬</div>
+                <h4>Messages</h4>
+                <p>Chat with your doctor</p>
+                <button 
+                  className="btn btn-outline"
+                  onClick={() => setActiveView('chat')}
+                >
+                  Open Messages
                 </button>
               </div>
             </div>

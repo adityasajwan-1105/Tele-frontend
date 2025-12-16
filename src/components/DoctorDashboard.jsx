@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE_URL } from '../utils/api';
+import Chat from './Chat';
 
 function DoctorDashboard() {
   const { user, logout } = useAuth();
@@ -280,6 +281,12 @@ function DoctorDashboard() {
               >
                 📋 My Schedule
               </button>
+              <button
+                className={`tab ${activeTab === 'chat' ? 'tab--active' : ''}`}
+                onClick={() => setActiveTab('chat')}
+              >
+                💬 Messages
+              </button>
             </div>
           </section>
 
@@ -435,6 +442,11 @@ function DoctorDashboard() {
                   </div>
                 </section>
               )}
+              {activeTab === 'chat' && (
+                <section className="dashboard__chat">
+                  <Chat />
+                </section>
+              )}
             </>
           )}
 
@@ -470,7 +482,7 @@ function DoctorDashboard() {
               {user?.consultationFee && (
                 <div className="info__row">
                   <span className="info__label">Consultation Fee:</span>
-                  <span className="info__value">${user.consultationFee}</span>
+                  <span className="info__value">₹{user.consultationFee}</span>
                 </div>
               )}
             </div>

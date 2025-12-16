@@ -413,7 +413,7 @@ function SignupForm({ onClose, onSignupSuccess }) {
             </div>
 
             <div className="form__field">
-              <label className="form__label" htmlFor="consultationFee">Consultation Fee (USD) *</label>
+              <label className="form__label" htmlFor="consultationFee">Consultation Fee (INR) *</label>
               <input
                 type="number"
                 id="consultationFee"
