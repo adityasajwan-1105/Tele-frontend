@@ -14,7 +14,9 @@ function Chat({ onBack }) {
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const shouldAutoScrollRef = useRef(true);
-  const previousMessagesLengthRef = useRef(0);
+  const previousMessagesIdsRef = useRef(new Set());
+  const isUserScrollingRef = useRef(false);
+  const forceScrollRef = useRef(false);
 
   useEffect(() => {
     fetchConversations();
@@ -36,8 +38,9 @@ function Chat({ onBack }) {
   const isNearBottom = () => {
     if (!messagesContainerRef.current) return true;
     const container = messagesContainerRef.current;
-    const threshold = 100; // pixels from bottom
-    return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    const threshold = 150; // pixels from bottom
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+    return distanceFromBottom < threshold;
   };
 
   // Handle scroll events to track if user manually scrolled
@@ -46,7 +49,13 @@ function Chat({ onBack }) {
     if (!container) return;
 
     const handleScroll = () => {
+      isUserScrollingRef.current = true;
       shouldAutoScrollRef.current = isNearBottom();
+      
+      // Reset the flag after a short delay
+      setTimeout(() => {
+        isUserScrollingRef.current = false;
+      }, 100);
     };
 
     container.addEventListener('scroll', handleScroll);
@@ -54,20 +63,53 @@ function Chat({ onBack }) {
   }, [selectedConversation]);
 
   useEffect(() => {
-    // Only auto-scroll if:
-    // 1. User is near bottom (hasn't scrolled up), OR
-    // 2. New messages were actually added (not just re-fetched)
-    const hasNewMessages = messages.length > previousMessagesLengthRef.current;
+    // Skip if no messages or container not ready
+    if (messages.length === 0 || !messagesContainerRef.current) {
+      previousMessagesIdsRef.current = new Set(messages.map(msg => msg._id));
+      return;
+    }
+
+    // Check if there are actually new messages (by comparing IDs)
+    const currentMessageIds = new Set(messages.map(msg => msg._id));
+    const hasNewMessages = messages.some(msg => !previousMessagesIdsRef.current.has(msg._id));
     
-    if (shouldAutoScrollRef.current || hasNewMessages) {
-      scrollToBottom();
+    // If no new messages and not forcing scroll, just update the ref and return (don't scroll)
+    if (!hasNewMessages && !forceScrollRef.current) {
+      previousMessagesIdsRef.current = currentMessageIds;
+      return;
     }
     
-    previousMessagesLengthRef.current = messages.length;
+    // Check current scroll position before deciding to scroll
+    const isCurrentlyNearBottom = isNearBottom();
+    
+    // Only auto-scroll if:
+    // 1. Force scroll is set (e.g., when sending a message), OR
+    // 2. User is near bottom (hasn't scrolled up) AND not currently manually scrolling AND has new messages
+    const shouldScroll = forceScrollRef.current || (!isUserScrollingRef.current && isCurrentlyNearBottom && hasNewMessages);
+    
+    if (shouldScroll) {
+      // Use setTimeout to ensure DOM is updated
+      setTimeout(() => {
+        // Double-check user hasn't scrolled in the meantime (unless forcing)
+        if (forceScrollRef.current || (!isUserScrollingRef.current && isNearBottom())) {
+          scrollToBottom();
+          forceScrollRef.current = false; // Reset force scroll flag
+        }
+      }, 50);
+    }
+    
+    // Update the previous messages IDs
+    previousMessagesIdsRef.current = currentMessageIds;
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      // Scroll only the chat messages container, not the whole page
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const fetchConversations = async () => {
@@ -139,6 +181,9 @@ function Chat({ onBack }) {
   const handleSelectConversation = (conversation) => {
     setSelectedConversation(conversation);
     shouldAutoScrollRef.current = true; // Reset to auto-scroll when selecting new conversation
+    previousMessagesIdsRef.current = new Set(); // Reset previous messages when switching conversations
+    isUserScrollingRef.current = false;
+    forceScrollRef.current = false; // Reset force scroll flag
     fetchMessages(conversation.user._id);
   };
 
@@ -163,7 +208,7 @@ function Chat({ onBack }) {
 
       const data = await res.json();
       if (data.success) {
-        shouldAutoScrollRef.current = true; // Auto-scroll when sending a message
+        forceScrollRef.current = true; // Force scroll when sending a message
         setMessages([...messages, data.message]);
         setNewMessage('');
         fetchConversations(); // Refresh conversations to update last message
