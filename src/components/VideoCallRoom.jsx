@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useAuth } from '../context/AuthContext';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_BASE_URL } from '../utils/api';
 
 function VideoCallRoom() {
   const { appointmentId } = useParams();
@@ -21,7 +20,7 @@ function VideoCallRoom() {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        const res = await fetch(`${API_BASE}/api/appointments/${appointmentId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
