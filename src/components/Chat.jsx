@@ -13,6 +13,8 @@ function Chat({ onBack }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
+  const shouldAutoScrollRef = useRef(true);
+  const previousMessagesLengthRef = useRef(0);
 
   useEffect(() => {
     fetchConversations();
@@ -30,8 +32,38 @@ function Chat({ onBack }) {
     return () => clearInterval(interval);
   }, [selectedConversation]);
 
+  // Check if user is near bottom of chat
+  const isNearBottom = () => {
+    if (!messagesContainerRef.current) return true;
+    const container = messagesContainerRef.current;
+    const threshold = 100; // pixels from bottom
+    return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+  };
+
+  // Handle scroll events to track if user manually scrolled
   useEffect(() => {
-    scrollToBottom();
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      shouldAutoScrollRef.current = isNearBottom();
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [selectedConversation]);
+
+  useEffect(() => {
+    // Only auto-scroll if:
+    // 1. User is near bottom (hasn't scrolled up), OR
+    // 2. New messages were actually added (not just re-fetched)
+    const hasNewMessages = messages.length > previousMessagesLengthRef.current;
+    
+    if (shouldAutoScrollRef.current || hasNewMessages) {
+      scrollToBottom();
+    }
+    
+    previousMessagesLengthRef.current = messages.length;
   }, [messages]);
 
   const scrollToBottom = () => {
@@ -106,6 +138,7 @@ function Chat({ onBack }) {
 
   const handleSelectConversation = (conversation) => {
     setSelectedConversation(conversation);
+    shouldAutoScrollRef.current = true; // Reset to auto-scroll when selecting new conversation
     fetchMessages(conversation.user._id);
   };
 
@@ -130,6 +163,7 @@ function Chat({ onBack }) {
 
       const data = await res.json();
       if (data.success) {
+        shouldAutoScrollRef.current = true; // Auto-scroll when sending a message
         setMessages([...messages, data.message]);
         setNewMessage('');
         fetchConversations(); // Refresh conversations to update last message
